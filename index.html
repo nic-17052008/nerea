@@ -146,28 +146,42 @@
 
   <div class="stars-container">
 
-    <!-- ESTRELLA 1 -->
-    <div class="star-card" id="star-1">
-      <div class="star-header">
-        <span class="star-title">ESTRELLA I · FUGAZ</span>
-        <span class="status-badge" id="badge-1">BLOQUEADO</span>
-      </div>
-      
-      <div class="lock-form" id="form-1">
-        <input type="password" id="pass-1" placeholder="Contraseña...">
-        <button onclick="unlock(1, '1234')">Abrir</button>
-      </div>
-      <div class="error-msg" id="err-1">Contraseña incorrecta</div>
-
-      <div class="content" id="content-1">
-        <p><i>Apareció sin que la buscara...</i></p>
-        <p>Lo que ocurrió en aquel lugar pasó hace tiempo, y aun así su luz sigue llegando.</p>
-        <img src="https://via.placeholder.com/600x400/000000/C8A45C?text=Tu+Foto+Aqui" alt="Recuerdo I">
-        <p style="font-family:'Space Mono'; font-size:0.8rem; color: var(--accent-gold); margin-top:15px;">
-          Pista para la Estrella II: La contraseña es el nombre de nuestro restaurante favorito.
-        </p>
-      </div>
+<!-- DÍA 1 -->
+<div class="day-card" id="card-1">
+  <div class="day-header">
+    <div>
+      <div class="day-number">NOCHE I · CLASIFICACIÓN: FUGAZ</div>
+      <div class="day-title">Donde empezó todo</div>
     </div>
+    <div class="status-badge" id="badge-1">🔒 Bloqueado</div>
+  </div>
+
+  <div class="lock-box" id="lock-1">
+    <div class="lock-hint">Pista: La contraseña es "dvalentino" o "nerea".</div>
+    <div class="input-group">
+      <input type="password" class="pass-input" id="input-1" placeholder="Clave de la Noche I">
+      <button class="unlock-btn" onclick="checkPass(1)">Desbloquear</button>
+    </div>
+    <div class="error-text" id="err-1">Contraseña incorrecta</div>
+  </div>
+
+  <div class="day-content" id="content-1">
+    <div class="media-frame">
+      <!-- Muestra la foto de vosotras haciendo la mueca -->
+      <img src="image_3a0d4c.jpg" alt="Nerea y tú">
+    </div>
+    <div class="content-body">
+      <p>Si me hubieran dicho aquella noche que un concierto de <strong>DValentino</strong> iba a acabar llevándome hasta ti, probablemente me habría reído.</p>
+      <p>Porque, si lo pienso, nuestra historia empezó de una manera tan pequeña que resulta increíble todo lo que vino después. Estábamos allí, en un concierto, cada una haciendo su vida, sin saber absolutamente nada la una de la otra. Y entonces apareciste tú para decirme que no estaba grabando.</p>
+      <p>Puede parecer una tontería, y seguramente en ese momento ninguna de las dos le dio demasiada importancia. Pero después me pediste el Instagram. Y cuando terminó todo, fui yo la que decidió escribirte para darte las gracias.</p>
+      <p>Y qué curioso es pensar que ese mensaje, que en aquel momento no era más que un simple “gracias”, acabaría siendo el primero de tantos. No sabía quién eras. No sabía todo lo que iba a descubrir de ti: todas las conversaciones que nos quedaban por tener, todas las risas, todos los vaciles y todos los momentos que terminaríamos compartiendo.</p>
+      <p>Solo sabía que había conocido a una chica en un concierto. Y ahora, mirando hacia atrás, me hace gracia pensar que aquel día conocí a alguien que terminaría siendo muchísimo más importante para mí de lo que jamás habría imaginado.</p>
+      <p><i>Supongo que algunas de las cosas más bonitas de la vida empiezan así: sin avisar, sin hacer ruido y sin que te des cuenta de que estás viviendo el principio de algo que un día significará tanto.</i></p>
+    </div>
+    <div class="next-clue-box">
+      ✦ Pista para la Noche II: La contraseña es "binaria".
+    </div>
+  </div>
 
     <!-- ESTRELLA 2 -->
     <div class="star-card" id="star-2">
