@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Observatorio · Magnitud Absoluta</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Space+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #06080F;
+      --card-bg: #0D111E;
+      --accent-gold: #C8A45C;
+      --text-cream: #F5F1E6;
+      --text-muted: #8A92A6;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-cream);
+      font-family: 'Cormorant Garamond', serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      color: var(--accent-gold);
+      letter-spacing: 3px;
+      font-size: 2rem;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      font-family: 'Space Mono', monospace;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+    }
+
+    .stars-container {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .star-card {
+      background-color: var(--card-bg);
+      border: 1px solid rgba(200, 164, 92, 0.2);
+      border-radius: 8px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .star-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .star-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.2rem;
+      color: var(--accent-gold);
+    }
+
+    .status-badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+    }
+
+    /* Estado bloqueado */
+    .lock-form {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+    }
+
+    input[type="password"], input[type="text"] {
+      background: #06080F;
+      border: 1px solid var(--accent-gold);
+      color: var(--text-cream);
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-family: 'Space Mono', monospace;
+      flex-grow: 1;
+    }
+
+    button {
+      background: var(--accent-gold);
+      color: #000;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-family: 'Cinzel', serif;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Estado desbloqueado */
+    .content {
+      display: none;
+      margin-top: 15px;
+      border-top: 1px dashed rgba(200, 164, 92, 0.3);
+      padding-top: 15px;
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+
+    .content img {
+      width: 100%;
+      border-radius: 6px;
+      margin-top: 10px;
+      border: 1px solid var(--accent-gold);
+    }
+
+    .error-msg {
+      color: #ff6b6b;
+      font-size: 0.8rem;
+      font-family: 'Space Mono', monospace;
+      margin-top: 5px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>OBSERVATORIO VIRTUAL</h1>
+    <div class="subtitle">Verificación de hallazgo · Magnitud Absoluta</div>
+  </header>
+
+  <div class="stars-container">
+
+    <!-- ESTRELLA 1 -->
+    <div class="star-card" id="star-1">
+      <div class="star-header">
+        <span class="star-title">ESTRELLA I · FUGAZ</span>
+        <span class="status-badge" id="badge-1">BLOQUEADO</span>
+      </div>
+      
+      <div class="lock-form" id="form-1">
+        <input type="password" id="pass-1" placeholder="Contraseña...">
+        <button onclick="unlock(1, '1234')">Abrir</button>
+      </div>
+      <div class="error-msg" id="err-1">Contraseña incorrecta</div>
+
+      <div class="content" id="content-1">
+        <p><i>Apareció sin que la buscara...</i></p>
+        <p>Lo que ocurrió en aquel lugar pasó hace tiempo, y aun así su luz sigue llegando.</p>
+        <img src="https://via.placeholder.com/600x400/000000/C8A45C?text=Tu+Foto+Aqui" alt="Recuerdo I">
+        <p style="font-family:'Space Mono'; font-size:0.8rem; color: var(--accent-gold); margin-top:15px;">
+          Pista para la Estrella II: La contraseña es el nombre de nuestro restaurante favorito.
+        </p>
+      </div>
+    </div>
+
+    <!-- ESTRELLA 2 -->
+    <div class="star-card" id="star-2">
+      <div class="star-header">
+        <span class="star-title">ESTRELLA II · SISTEMA BINARIO</span>
+        <span class="status-badge" id="badge-2">BLOQUEADO</span>
+      </div>
+      
+      <div class="lock-form" id="form-2">
+        <input type="password" id="pass-2" placeholder="Contraseña...">
+        <button onclick="unlock(2, 'pizza')">Abrir</button>
+      </div>
+      <div class="error-msg" id="err-2">Contraseña incorrecta</div>
+
+      <div class="content" id="content-2">
+        <p>Dos cuerpos que giran uno alrededor del otro...</p>
+        <!-- Aquí va el contenido desbloqueado de la Estrella II -->
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function unlock(id, correctPassword) {
+      const input = document.getElementById(`pass-${id}`).value;
+      const error = document.getElementById(`err-${id}`);
+      const form = document.getElementById(`form-${id}`);
+      const content = document.getElementById(`content-${id}`);
+      const badge = document.getElementById(`badge-${id}`);
+
+      if (input.toLowerCase().trim() === correctPassword.toLowerCase()) {
+        form.style.display = 'none';
+        error.style.display = 'none';
+        content.style.display = 'block';
+        badge.innerText = 'DESBLOQUEADO';
+        badge.style.color = '#C8A45C';
+        badge.style.background = 'rgba(200, 164, 92, 0.2)';
+      } else {
+        error.style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>
