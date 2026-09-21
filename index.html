@@ -211,4 +211,1062 @@
     }
   </script>
 </body>
+</html><!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Observatorio · Siete Noches con Nerea</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-deep: #030509;
+      --card-bg: rgba(13, 18, 30, 0.85);
+      --gold-primary: #d4af37;
+      --gold-bright: #fff2a1;
+      --gold-dark: #8c7322;
+      --cyan-glow: #70d6ff;
+      --text-main: #f5f1e6;
+      --text-muted: #9aa5b8;
+      --border-gold: rgba(212, 175, 55, 0.3);
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-deep);
+      color: var(--text-main);
+      font-family: 'Cormorant Garamond', serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    #space-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .app-header {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 50px 20px 20px 20px;
+      background: linear-gradient(180deg, rgba(3,5,9,0.9) 0%, rgba(3,5,9,0) 100%);
+    }
+
+    .header-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 4px;
+      color: var(--cyan-glow);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: var(--gold-primary);
+      text-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+      letter-spacing: 3px;
+    }
+
+    .subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.3rem;
+      color: var(--text-muted);
+      margin-top: 5px;
+    }
+
+    .controls-bar {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+      display: flex;
+      gap: 12px;
+    }
+
+    .icon-btn {
+      background: rgba(13, 18, 30, 0.8);
+      border: 1px solid var(--border-gold);
+      color: var(--gold-primary);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.3s ease;
+      box-shadow: var(--glass-shadow);
+    }
+
+    .icon-btn:hover {
+      background: var(--gold-primary);
+      color: #000;
+      box-shadow: 0 0 15px var(--gold-primary);
+      transform: scale(1.05);
+    }
+
+    .main-container {
+      position: relative;
+      z-index: 10;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .constellation-wrapper {
+      background: rgba(8, 12, 22, 0.6);
+      border: 1px solid var(--border-gold);
+      border-radius: 16px;
+      padding: 30px 10px;
+      margin-bottom: 40px;
+      backdrop-filter: blur(12px);
+      box-shadow: var(--glass-shadow);
+    }
+
+    .constellation-title {
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      letter-spacing: 2px;
+      color: var(--gold-primary);
+      margin-bottom: 10px;
+    }
+
+    .constellation-svg {
+      width: 100%;
+      height: 220px;
+    }
+
+    .node-circle {
+      fill: var(--bg-deep);
+      stroke: var(--gold-primary);
+      stroke-width: 2;
+      cursor: pointer;
+      transition: all 0.4s ease;
+    }
+
+    .node-circle.unlocked {
+      fill: var(--gold-primary);
+      filter: drop-shadow(0 0 8px var(--gold-primary));
+    }
+
+    .node-circle:hover {
+      r: 16;
+      stroke: #fff;
+    }
+
+    .node-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      fill: var(--text-main);
+      text-anchor: middle;
+      pointer-events: none;
+    }
+
+    .constellation-line {
+      stroke: rgba(212, 175, 55, 0.2);
+      stroke-width: 2;
+      stroke-dasharray: 4;
+    }
+
+    .constellation-line.active {
+      stroke: var(--gold-primary);
+      stroke-dasharray: none;
+      filter: drop-shadow(0 0 4px var(--gold-primary));
+    }
+
+    .days-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 35px;
+    }
+
+    .day-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-gold);
+      border-radius: 16px;
+      padding: 30px;
+      backdrop-filter: blur(16px);
+      box-shadow: var(--glass-shadow);
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .day-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--gold-primary);
+      opacity: 0.3;
+    }
+
+    .day-card.unlocked-card::before {
+      opacity: 1;
+      box-shadow: 0 0 10px var(--gold-primary);
+    }
+
+    .day-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+      padding-bottom: 12px;
+    }
+
+    .day-number {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--cyan-glow);
+      letter-spacing: 2px;
+    }
+
+    .day-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.5rem;
+      color: var(--gold-primary);
+      letter-spacing: 1px;
+    }
+
+    .status-badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-badge.unlocked {
+      background: rgba(212, 175, 55, 0.15);
+      border-color: var(--gold-primary);
+      color: var(--gold-bright);
+    }
+
+    .lock-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 0;
+      gap: 15px;
+    }
+
+    .lock-hint {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      text-align: center;
+      font-style: italic;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .pass-input {
+      flex: 1;
+      background: rgba(3, 5, 9, 0.8);
+      border: 1px solid var(--border-gold);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: var(--gold-bright);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.3s ease;
+      text-align: center;
+      letter-spacing: 2px;
+    }
+
+    .pass-input:focus {
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+    }
+
+    .unlock-btn {
+      background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-dark) 100%);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 0 20px;
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .unlock-btn:hover {
+      box-shadow: 0 0 15px var(--gold-primary);
+      transform: translateY(-2px);
+    }
+
+    .error-text {
+      color: #ff5555;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      display: none;
+    }
+
+    .day-content {
+      display: none;
+      animation: fadeIn 0.8s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .content-body {
+      font-size: 1.25rem;
+      line-height: 1.8;
+      color: var(--text-main);
+      margin-bottom: 25px;
+    }
+
+    .media-frame {
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-gold);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      margin-bottom: 20px;
+      position: relative;
+      background: #000;
+    }
+
+    .media-frame img {
+      width: 100%;
+      height: auto;
+      max-height: 450px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .next-clue-box {
+      margin-top: 25px;
+      padding: 15px;
+      background: rgba(112, 214, 255, 0.05);
+      border-left: 3px solid var(--cyan-glow);
+      border-radius: 0 8px 8px 0;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--cyan-glow);
+    }
+
+    .mirror-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 20px 0;
+    }
+
+    .mirror-frame {
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      border: 4px solid var(--gold-primary);
+      box-shadow: 0 0 30px var(--gold-primary), inset 0 0 20px rgba(212, 175, 55, 0.5);
+      position: relative;
+      overflow: hidden;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #webcam-feed {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+    }
+
+    .mirror-fallback {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(212,175,55,0.2) 0%, rgba(3,5,9,0.9) 80%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .mirror-tag {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      color: var(--gold-bright);
+      text-shadow: 0 0 10px var(--gold-primary);
+      margin-top: 10px;
+    }
+
+    /* Modal de Ajustes */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-box {
+      background: var(--card-bg);
+      border: 1px solid var(--gold-primary);
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: var(--glass-shadow);
+      position: relative;
+    }
+
+    .modal-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      color: var(--gold-primary);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .pass-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    .pass-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+    }
+
+    .pass-item input {
+      background: #030509;
+      border: 1px solid var(--border-gold);
+      border-radius: 4px;
+      padding: 6px 10px;
+      color: var(--gold-bright);
+      font-family: 'Space Mono', monospace;
+      width: 150px;
+      text-align: center;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 2rem; }
+      .day-card { padding: 20px; }
+      .day-title { font-size: 1.2rem; }
+      .input-group { flex-direction: column; }
+      .unlock-btn { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="space-canvas"></canvas>
+
+  <div class="controls-bar">
+    <button class="icon-btn" id="audio-toggle" title="Música ambiental">🎵</button>
+    <button class="icon-btn" id="settings-toggle" title="Ajustar Contraseñas">⚙️</button>
+  </div>
+
+  <header class="app-header">
+    <div class="header-tag">Observatorio Estelar</div>
+    <h1>Siete Noches con Nerea</h1>
+    <div class="subtitle">Catálogo de Magnitud Absoluta · Registro Personal</div>
+  </header>
+
+  <main class="main-container">
+
+    <!-- Mapa de Constelaciones -->
+    <div class="constellation-wrapper">
+      <div class="constellation-title">✦ Mapa de Alineación de Noches ✦</div>
+      <svg class="constellation-svg" viewBox="0 0 700 180">
+        <line x1="60" y1="90" x2="150" y2="50" class="constellation-line" id="line-1"/>
+        <line x1="150" y1="50" x2="250" y2="130" class="constellation-line" id="line-2"/>
+        <line x1="250" y1="130" x2="350" y2="60" class="constellation-line" id="line-3"/>
+        <line x1="350" y1="60" x2="450" y2="120" class="constellation-line" id="line-4"/>
+        <line x1="450" y1="120" x2="550" y2="50" class="constellation-line" id="line-5"/>
+        <line x1="550" y1="50" x2="640" y2="90" class="constellation-line" id="line-6"/>
+
+        <g onclick="scrollToDay(1)">
+          <circle cx="60" cy="90" r="12" class="node-circle" id="node-1"/>
+          <text x="60" y="94" class="node-text">I</text>
+        </g>
+        <g onclick="scrollToDay(2)">
+          <circle cx="150" cy="50" r="12" class="node-circle" id="node-2"/>
+          <text x="150" y="54" class="node-text">II</text>
+        </g>
+        <g onclick="scrollToDay(3)">
+          <circle cx="250" cy="130" r="12" class="node-circle" id="node-3"/>
+          <text x="250" y="134" class="node-text">III</text>
+        </g>
+        <g onclick="scrollToDay(4)">
+          <circle cx="350" cy="60" r="12" class="node-circle" id="node-4"/>
+          <text x="350" y="64" class="node-text">IV</text>
+        </g>
+        <g onclick="scrollToDay(5)">
+          <circle cx="450" cy="120" r="12" class="node-circle" id="node-5"/>
+          <text x="450" y="124" class="node-text">V</text>
+        </g>
+        <g onclick="scrollToDay(6)">
+          <circle cx="550" cy="50" r="12" class="node-circle" id="node-6"/>
+          <text x="550" y="54" class="node-text">VI</text>
+        </g>
+        <g onclick="scrollToDay(7)">
+          <circle cx="640" cy="90" r="14" class="node-circle" id="node-7"/>
+          <text x="640" y="94" class="node-text">VII</text>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Lista de Días -->
+    <div class="days-grid">
+
+      <!-- DÍA 1 -->
+      <div class="day-card" id="card-1">
+        <div class="day-header">
+          <div>
+            <div class="day-number">NOCHE I · CLASIFICACIÓN: FUGAZ</div>
+            <div class="day-title">La Luz que Llega Tarde</div>
+          </div>
+          <div class="status-badge" id="badge-1">🔒 Bloqueado</div>
+        </div>
+
+        <div class="lock-box" id="lock-1">
+          <div class="lock-hint">Pista: La fecha o año en que cruzamos caminos por primera vez (o escribe "nerea").</div>
+          <div class="input-group">
+            <input type="password" class="pass-input" id="input-1" placeholder="Clave de la Noche I">
+            <button class="unlock-btn" onclick="checkPass(1)">Desbloquear</button>
+          </div>
+          <div class="error-text" id="err-1">Contraseña incorrecta</div>
+        </div>
+
+        <div class="day-content" id="content-1">
+          <div class="media-frame">
+            <img src="https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=1000&auto=format&fit=crop" alt="Cielo Estrellado">
+          </div>
+          <div class="content-body">
+            Apareciste sin que te buscara, que es como llegan casi todas las cosas que verdaderamente importan. Los astrónomos saben que el cielo es una fotografía antigua: la luz que vemos hoy salió hace años y todavía está de camino. Con esta primera noche me pasa igual. Lo que ocurrió el primer día que te vi pasó hace tiempo, y aun así su luz sigue llegándome intacta.
+          </div>
+          <div class="next-clue-box">
+            ✦ Pista para la Noche II: La contraseña es "binaria" (dos almas en la misma órbita).
+          </div>
+        </div>
+      </div>
+
+      <!-- DÍA 2 -->
+      <div class="day-card" id="card-2">
+        <div class="day-header">
+          <div>
+            <div class="day-number">NOCHE II · CLASIFICACIÓN: SISTEMA BINARIO</div>
+            <div class="day-title">Fuerza de Atracción</div>
+          </div>
+          <div class="status-badge" id="badge-2">🔒 Bloqueado</div>
+        </div>
+
+        <div class="lock-box" id="lock-2">
+          <div class="lock-hint">Pista: Pide la contraseña que te reveló la Noche I.</div>
+          <div class="input-group">
+            <input type="password" class="pass-input" id="input-2" placeholder="Clave de la Noche II">
+            <button class="unlock-btn" onclick="checkPass(2)">Desbloquear</button>
+          </div>
+          <div class="error-text" id="err-2">Contraseña incorrecta</div>
+        </div>
+
+        <div class="day-content" id="content-2">
+          <div class="media-frame">
+            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" alt="Órbita Binaria">
+          </div>
+          <div class="content-body">
+            Dos cuerpos que giran uno alrededor del otro, sostenidos por una fuerza gravitatoria que ninguno de los dos decidió, pero que encaja perfectamente. Tras mucho tiempo analizando nuestras conversaciones y nuestras bromas compartidas, sigo sin determinar quién atrae a quién. Sospecho que nos atraemos mutuamente.
+          </div>
+          <div class="next-clue-box">
+            ✦ Pista para la Noche III: La clave es la palabra "risas".
+          </div>
+        </div>
+      </div>
+
+      <!-- DÍA 3 -->
+      <div class="day-card" id="card-3">
+        <div class="day-header">
+          <div>
+            <div class="day-number">NOCHE III · CLASIFICACIÓN: SUPERNOVA</div>
+            <div class="day-title">Explosión de Alegría</div>
+          </div>
+          <div class="status-badge" id="badge-3">🔒 Bloqueado</div>
+        </div>
+
+        <div class="lock-box" id="lock-3">
+          <div class="lock-hint">Pista: Aquello que nos pasa cuando no podemos parar de reír.</div>
+          <div class="input-group">
+            <input type="password" class="pass-input" id="input-3" placeholder="Clave de la Noche III">
+            <button class="unlock-btn" onclick="checkPass(3)">Desbloquear</button>
+          </div>
+          <div class="error-text" id="err-3">Contraseña incorrecta</div>
+        </div>
+
+        <div class="day-content" id="content-3">
+          <div class="media-frame">
+            <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=1000&auto=format&fit=crop" alt="Supernova">
+          </div>
+          <div class="content-body">
+            Una supernova es una explosión tan luminosa que durante unos días brilla más que toda la galaxia que la rodea. Mi único registro comparable es cada vez que nos reímos juntos hasta que nos duele el abdomen y se nos saltan las lágrimas. Efecto secundario: imposibilidad de explicárselo a terceros.
+          </div>
+          <div class="next-clue-box">
+            ✦ Pista para la Noche IV: La contraseña es "pulsar".
+          </div>
+        </div>
+      </div>
+
+      <!-- DÍA 4 -->
+      <div class="day-card" id="card-4">
+        <div class="day-header">
+          <div>
+            <div class="day-number">NOCHE IV · CLASIFICACIÓN: PÚLSAR</div>
+            <div class="day-title">Ritmo Continuo</div>
+          </div>
+          <div class="status-badge" id="badge-4">🔒 Bloqueado</div>
+        </div>
+
+        <div class="lock-box" id="lock-4">
+          <div class="lock-hint">Pista: Una estrella que emite destellos de luz con regularidad matemática.</div>
+          <div class="input-group">
+            <input type="password" class="pass-input" id="input-4" placeholder="Clave de la Noche IV">
+            <button class="unlock-btn" onclick="checkPass(4)">Desbloquear</button>
+          </div>
+          <div class="error-text" id="err-4">Contraseña incorrecta</div>
+        </div>
+
+        <div class="day-content" id="content-4">
+          <div class="media-frame">
+            <img src="https://images.unsplash.com/photo-1502134249126-9f3755a50d78?q=80&w=1000&auto=format&fit=crop" alt="Púlsar">
+          </div>
+          <div class="content-body">
+            Un púlsar emite destellos con una precisión exacta que puede detectarse a miles de años luz. Yo no necesito un radiotelescopio para detectar tu destello: basta con ver cómo se te achinan los ojos justo antes de sonreír. Es una constante que ilumina a cualquiera que esté cerca.
+          </div>
+          <div class="next-clue-box">
+            ✦ Pista para la Noche V: La contraseña es "norte".
+          </div>
+        </div>
+      </div>
+
+      <!-- DÍA 5 -->
+      <div class="day-card" id="card-5">
+        <div class="day-header">
+          <div>
+            <div class="day-number">NOCHE V · CLASIFICACIÓN: ESTRELLA POLAR</div>
+            <div class="day-title">Punto de Referencia</div>
+          </div>
+          <div class="status-badge" id="badge-5">🔒 Bloqueado</div>
+        </div>
+
+        <div class="lock-box" id="lock-5">
+          <div class="lock-hint">Pista: La dirección que marca la estrella que nunca se mueve.</div>
+          <div class="input-group">
+            <input type="password" class="pass-input" id="input-5" placeholder="Clave de la Noche V">
+            <button class="unlock-btn" onclick="checkPass(5)">Desbloquear</button>
+          </div>
+          <div class="error-text" id="err-5">Contraseña incorrecta</div>
+        </div>
+
+        <div class="day-content" id="content-5">
+          <div class="media-frame">
+            <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1000&auto=format&fit=crop" alt="Estrella Polar">
+          </div>
+          <div class="content-body">
+            Durante siglos, quien se perdía miraba siempre hacia la misma estrella porque todo giraba a su alrededor mientras ella marcaba el rumbo. Tú haces exactamente eso sin darte cuenta: basta con que estés donde tienes que estar para dar tranquilidad y reordenar todo a tu alrededor.
+          </div>
+          <div class="next-clue-box">
+            ✦ Pista para la Noche VI: La clave es "nebulosa".
+          </div>
+        </div>
+      </div>
+
+      <!-- DÍA 6 -->
+      <div class="day-card" id="card-6">
+        <div class="day-header">
+          <div>
+            <div class="day-number">NOCHE VI · CLASIFICACIÓN: NEBULOSA</div>
+            <div class="day-title">Cuna de Estrellas</div>
+          </div>
+          <div class="status-badge" id="badge-6">🔒 Bloqueado</div>
+        </div>
+
+        <div class="lock-box" id="lock-6">
+          <div class="lock-hint">Pista: Nubes de polvo cósmico donde nacen nuevas luces.</div>
+          <div class="input-group">
+            <input type="password" class="pass-input" id="input-6" placeholder="Clave de la Noche VI">
+            <button class="unlock-btn" onclick="checkPass(6)">Desbloquear</button>
+          </div>
+          <div class="error-text" id="err-6">Contraseña incorrecta</div>
+        </div>
+
+        <div class="day-content" id="content-6">
+          <div class="media-frame">
+            <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1000&auto=format&fit=crop" alt="Nebulosa">
+          </div>
+          <div class="content-body">
+            Las estrellas no nacen en el vacío, sino en las nebulosas. Hay personas que funcionan de la misma forma: desde que llegaste, has hecho encender partes de mí y recuerdos que ni siquiera sabía que guardaba. Estás a un solo paso del hallazgo final.
+          </div>
+          <div class="next-clue-box">
+            ✦ Pista para la Noche VII: La clave final es "estasaqui" o "nerea".
+          </div>
+        </div>
+      </div>
+
+      <!-- DÍA 7 -->
+      <div class="day-card" id="card-7">
+        <div class="day-header">
+          <div>
+            <div class="day-number">NOCHE VII · EL HALLAZGO FINAL</div>
+            <div class="day-title">Objeto Sin Catalogar</div>
+          </div>
+          <div class="status-badge" id="badge-7">🔒 Bloqueado</div>
+        </div>
+
+        <div class="lock-box" id="lock-7">
+          <div class="lock-hint">Pista: Introduce "estasaqui" para completar la verificación del catálogo.</div>
+          <div class="input-group">
+            <input type="password" class="pass-input" id="input-7" placeholder="Clave del Hallazgo Final">
+            <button class="unlock-btn" onclick="checkPass(7)">Desbloquear</button>
+          </div>
+          <div class="error-text" id="err-7">Contraseña incorrecta</div>
+        </div>
+
+        <div class="day-content" id="content-7">
+          <div class="mirror-container">
+            <div class="mirror-frame">
+              <video id="webcam-feed" autoplay playsinline muted></video>
+              <div class="mirror-fallback" id="mirror-fallback" style="display: none;">
+                <div style="font-size:3rem;">✨</div>
+                <div class="mirror-tag">NEREA</div>
+              </div>
+            </div>
+            <div style="font-family:'Space Mono'; font-size:0.85rem; color:var(--gold-bright); text-align:center;">
+              MAGNITUD ABSOLUTA: LA MAYOR REGISTRADA<br>UBICACIÓN: ESTÁS AQUÍ
+            </div>
+          </div>
+
+          <div class="content-body" style="margin-top:20px; font-style: italic; text-align: center;">
+            "Durante todo este tiempo estuve buscando la estrella más brillante del catálogo. Leí sobre gigantes lejanas y destellos lejanos. Pero aprendí que para saber cuánto brilla verdaderamente una estrella, no hay que mirarla de lejos: hay que acercarse. No había que buscarte en el cielo. Estabas aquí."
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modal de Configuración -->
+  <div class="modal-backdrop" id="settings-modal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="toggleSettings(false)">&times;</button>
+      <div class="modal-title">Configurar Contraseñas</div>
+      <div class="pass-list">
+        <div class="pass-item"><span>Noche I:</span> <input type="text" id="cfg-1"></div>
+        <div class="pass-item"><span>Noche II:</span> <input type="text" id="cfg-2"></div>
+        <div class="pass-item"><span>Noche III:</span> <input type="text" id="cfg-3"></div>
+        <div class="pass-item"><span>Noche IV:</span> <input type="text" id="cfg-4"></div>
+        <div class="pass-item"><span>Noche V:</span> <input type="text" id="cfg-5"></div>
+        <div class="pass-item"><span>Noche VI:</span> <input type="text" id="cfg-6"></div>
+        <div class="pass-item"><span>Noche VII:</span> <input type="text" id="cfg-7"></div>
+      </div>
+      <button class="unlock-btn" style="width:100%; padding: 12px;" onclick="saveCustomPasswords()">Guardar Cambios</button>
+    </div>
+  </div>
+
+  <script>
+    // --- ESTADO Y CONFIGURACIÓN ---
+    let passwords = {
+      1: ["nerea", "2024", "1234"],
+      2: ["binaria"],
+      3: ["risas"],
+      4: ["pulsar"],
+      5: ["norte"],
+      6: ["nebulosa"],
+      7: ["estasaqui", "nerea"]
+    };
+
+    let unlockedStates = {1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false};
+
+    // --- CANVAS ESPACIAL ANIMADO ---
+    const canvas = document.getElementById('space-canvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    let shootingStars = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Star {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 1.8 + 0.2;
+        this.alpha = Math.random();
+        this.speed = Math.random() * 0.015 + 0.005;
+        this.color = ['#ffffff', '#f5f1e6', '#70d6ff', '#d4af37'][Math.floor(Math.random() * 4)];
+      }
+      update() {
+        this.alpha += this.speed;
+        if (this.alpha > 1 || this.alpha < 0) this.speed = -this.speed;
+      }
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = Math.abs(this.alpha);
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    class ShootingStar {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height * 0.5;
+        this.len = Math.random() * 80 + 40;
+        this.speed = Math.random() * 10 + 6;
+        this.size = Math.random() * 1 + 0.1;
+        this.active = false;
+      }
+      trigger() { this.active = true; }
+      update() {
+        if (!this.active) return;
+        this.x -= this.speed;
+        this.y += this.speed * 0.6;
+        if (this.x < -100 || this.y > canvas.height + 100) {
+          this.active = false;
+          this.reset();
+        }
+      }
+      draw() {
+        if (!this.active) return;
+        ctx.save();
+        let grad = ctx.createLinearGradient(this.x, this.y, this.x + this.len, this.y - this.len * 0.6);
+        grad.addColorStop(0, 'rgba(255, 242, 161, 1)');
+        grad.addColorStop(1, 'rgba(255, 242, 161, 0)');
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = this.size;
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.y);
+        ctx.lineTo(this.x + this.len, this.y - this.len * 0.6);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    for (let i = 0; i < 200; i++) stars.push(new Star());
+    for (let i = 0; i < 3; i++) shootingStars.push(new ShootingStar());
+
+    setInterval(() => {
+      let randomStar = shootingStars[Math.floor(Math.random() * shootingStars.length)];
+      if (!randomStar.active) randomStar.trigger();
+    }, 4000);
+
+    function animateSpace() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(s => { s.update(); s.draw(); });
+      shootingStars.forEach(s => { s.update(); s.draw(); });
+      requestAnimationFrame(animateSpace);
+    }
+    animateSpace();
+
+    // --- DESBLOQUEO Y LÓGICA DE DÍAS ---
+    function checkPass(day) {
+      const input = document.getElementById(`input-${day}`).value.trim().toLowerCase();
+      const err = document.getElementById(`err-${day}`);
+      const validPasses = passwords[day].map(p => p.toLowerCase());
+
+      if (validPasses.includes(input)) {
+        unlockDay(day);
+        err.style.display = 'none';
+      } else {
+        err.style.display = 'block';
+        playTone(150, 'sawtooth', 0.2);
+      }
+    }
+
+    function unlockDay(day) {
+      unlockedStates[day] = true;
+      document.getElementById(`lock-${day}`).style.display = 'none';
+      document.getElementById(`content-${day}`).style.display = 'block';
+      
+      const badge = document.getElementById(`badge-${day}`);
+      badge.classList.add('unlocked');
+      badge.innerHTML = '✦ Desbloqueado';
+
+      document.getElementById(`card-${day}`).classList.add('unlocked-card');
+      document.getElementById(`node-${day}`).classList.add('unlocked');
+
+      if (day > 1) {
+        const line = document.getElementById(`line-${day - 1}`);
+        if (line) line.classList.add('active');
+      }
+
+      playTone(523.25, 'sine', 0.4); // Sonido celestial de éxito
+
+      if (day === 7) {
+        initCamera();
+      }
+    }
+
+    function scrollToDay(day) {
+      document.getElementById(`card-${day}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // --- CÁMARA WEB (ESPEJO DIGITAL DÍA VII) ---
+    async function initCamera() {
+      const video = document.getElementById('webcam-feed');
+      const fallback = document.getElementById('mirror-fallback');
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+      } catch (err) {
+        video.style.display = 'none';
+        fallback.style.display = 'flex';
+      }
+    }
+
+    // --- AUDIO AMBIENTAL Y EFECTOS (WEB AUDIO API) ---
+    let audioCtx = null;
+    let isPlayingAudio = false;
+    let osc1, osc2;
+
+    document.getElementById('audio-toggle').addEventListener('click', () => {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (isPlayingAudio) {
+        if (osc1) osc1.stop();
+        if (osc2) osc2.stop();
+        isPlayingAudio = false;
+        document.getElementById('audio-toggle').innerText = '🎵';
+      } else {
+        osc1 = audioCtx.createOscillator();
+        osc2 = audioCtx.createOscillator();
+        let gain = audioCtx.createGain();
+
+        osc1.type = 'sine';
+        osc2.type = 'triangle';
+        osc1.frequency.setValueAtTime(110, audioCtx.currentTime); // Nota A2
+        osc2.frequency.setValueAtTime(164.81, audioCtx.currentTime); // Nota E3
+
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+
+        osc1.connect(gain);
+        osc2.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc1.start();
+        osc2.start();
+        isPlayingAudio = true;
+        document.getElementById('audio-toggle').innerText = '🔊';
+      }
+    });
+
+    function playTone(freq, type, duration) {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      let osc = audioCtx.createOscillator();
+      let gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    }
+
+    // --- AJUSTE DE CONTRASEÑAS ---
+    document.getElementById('settings-toggle').addEventListener('click', () => toggleSettings(true));
+
+    function toggleSettings(show) {
+      const modal = document.getElementById('settings-modal');
+      modal.style.display = show ? 'flex' : 'none';
+      if (show) {
+        for (let i = 1; i <= 7; i++) {
+          document.getElementById(`cfg-${i}`).value = passwords[i][0];
+        }
+      }
+    }
+
+    function saveCustomPasswords() {
+      for (let i = 1; i <= 7; i++) {
+        const val = document.getElementById(`cfg-${i}`).value.trim();
+        if (val) passwords[i] = [val];
+      }
+      toggleSettings(false);
+      alert('Contraseñas actualizadas.');
+    }
+  </script>
+</body>
 </html>
