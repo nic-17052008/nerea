@@ -2377,7 +2377,7 @@
                 <input
                     id="setting1"
                     type="text"
-                    value="nerea"
+                    value="dvalentino"
                 >
 
             </div>
@@ -2391,7 +2391,7 @@
                 <input
                     id="setting2"
                     type="text"
-                    value="binaria"
+                    value="tulipanes"
                 >
 
             </div>
@@ -2405,7 +2405,7 @@
                 <input
                     id="setting3"
                     type="text"
-                    value="risas"
+                    value="lulu"
                 >
 
             </div>
@@ -2419,7 +2419,7 @@
                 <input
                     id="setting4"
                     type="text"
-                    value="pulsar"
+                    value="theweeknd"
                 >
 
             </div>
@@ -2433,7 +2433,7 @@
                 <input
                     id="setting5"
                     type="text"
-                    value="norte"
+                    value="11082026"
                 >
 
             </div>
@@ -2447,7 +2447,7 @@
                 <input
                     id="setting6"
                     type="text"
-                    value="nebulosa"
+                    value="asturiana"
                 >
 
             </div>
@@ -2461,7 +2461,7 @@
                 <input
                     id="setting7"
                     type="text"
-                    value="estasaqui"
+                    value="nenita"
                 >
 
             </div>
@@ -2499,7 +2499,7 @@
             1: ["dvalentino"],
             2: ["tulipanes"],
             3: ["lulu"],
-            4: ["thewekend"],
+            4: ["thewekend", "theweeknd"],
             5: ["11082026"],
             6: ["asturiana"],
             7: ["nenita"]
@@ -2517,15 +2517,21 @@
            DESBLOQUEAR NOCHE
         ========================================= */
 
+        function normalizePassword(value) {
+            return String(value ?? "")
+                .trim()
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/\s+/g, "");
+        }
+
+
         function checkPass(day) {
 
             const input = document.getElementById("pass" + day);
 
-            const value = input.value
-                .trim()
-                .toLowerCase()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "");
+            const value = normalizePassword(input.value);
 
             const error = document.getElementById("error" + day);
 
@@ -2897,7 +2903,7 @@
                         .toLowerCase();
 
                 if (value) {
-                    passwords[i] = [value];
+                    passwords[i] = [normalizePassword(value)];
                 }
 
             }
