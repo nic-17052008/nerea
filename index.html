@@ -719,6 +719,29 @@
                 height: 280px;
             }
         }
+
+        /* REPRODUCTORES DE LAS SIETE NOCHES */
+
+        .night-audio {
+            width: 100%;
+            margin: 0 auto 30px;
+            padding: 12px 14px;
+            border: 1px solid rgba(200, 164, 92, 0.2);
+            border-radius: 14px;
+            background: rgba(3, 6, 15, 0.38);
+        }
+
+        .night-audio audio {
+            display: block;
+            width: 100%;
+            height: 42px;
+            accent-color: var(--gold);
+        }
+
+        .night-audio audio::-webkit-media-controls-panel {
+            background: rgba(13, 19, 42, 0.9);
+        }
+
     </style>
 </head>
 
@@ -1035,6 +1058,13 @@
 
                     <div class="letter" id="letter1">
 
+                        <div class="night-audio">
+                            <audio controls preload="none" data-night-audio="1" aria-label="D.Valentino — Donde el amor nos lleve">
+                                <source src="dvalentino-donde-el-amor-nos-lleve.mp3" type="audio/mpeg">
+                            </audio>
+                        </div>
+
+
                         <img
                             src="foto1.jpg"
                             alt="Noche 1"
@@ -1182,6 +1212,13 @@
 
 
                     <div class="letter" id="letter2">
+
+                        <div class="night-audio">
+                            <audio controls preload="none" data-night-audio="2" aria-label="Lewis Capaldi — Before You Go">
+                                <source src="lewis-capaldi-before-you-go.mp3" type="audio/mpeg">
+                            </audio>
+                        </div>
+
 
                         <img
                             src="foto2.jpg"
@@ -1342,6 +1379,13 @@
 
 
                     <div class="letter" id="letter3">
+
+                        <div class="night-audio">
+                            <audio controls preload="none" data-night-audio="3" aria-label="Chase Atlantic — Moonlight">
+                                <source src="chase-atlantic-moonlight.mp3" type="audio/mpeg">
+                            </audio>
+                        </div>
+
 
                         <img
                             src="foto3.jpg"
@@ -1530,6 +1574,13 @@
 
 
                     <div class="letter" id="letter4">
+
+                        <div class="night-audio">
+                            <audio controls preload="none" data-night-audio="4" aria-label="The Neighbourhood — Reflections">
+                                <source src="the-neighbourhood-reflections.mp3" type="audio/mpeg">
+                            </audio>
+                        </div>
+
 
                         <img
                             src="foto4.jpg"
@@ -1739,6 +1790,13 @@
 
                     <div class="letter" id="letter5">
 
+                        <div class="night-audio">
+                            <audio controls preload="none" data-night-audio="5" aria-label="Tate McRae — Siren sounds">
+                                <source src="tate-mcrae-siren-sounds.mp3" type="audio/mpeg">
+                            </audio>
+                        </div>
+
+
                         <img
                             src="foto5.jpg"
                             alt="Noche 5"
@@ -1914,6 +1972,13 @@
 
 
                     <div class="letter" id="letter6">
+
+                        <div class="night-audio">
+                            <audio controls preload="none" data-night-audio="6" aria-label="Billie Eilish — ocean eyes">
+                                <source src="billie-eilish-ocean-eyes.mp3" type="audio/mpeg">
+                            </audio>
+                        </div>
+
 
                         <img
                             src="foto6.jpg"
@@ -2102,6 +2167,13 @@
 
 
                     <div class="letter" id="letter7">
+
+                        <div class="night-audio">
+                            <audio controls preload="none" data-night-audio="7" aria-label="Bruno Mars — Talking To The Moon">
+                                <source src="bruno-mars-talking-to-the-moon.mp3" type="audio/mpeg">
+                            </audio>
+                        </div>
+
 
                         <img
                             src="foto7.jpg"
@@ -2584,6 +2656,30 @@
         resizeCanvas();
         animateStars();
 
+
+
+        /* =========================================
+           AUDIO DE LAS SIETE NOCHES
+        ========================================= */
+
+        const nightAudios =
+            document.querySelectorAll("[data-night-audio]");
+
+        nightAudios.forEach(audio => {
+
+            audio.addEventListener("play", function() {
+
+                nightAudios.forEach(otherAudio => {
+
+                    if (otherAudio !== audio) {
+                        otherAudio.pause();
+                    }
+
+                });
+
+            });
+
+        });
 
         /* =========================================
            AUDIO AMBIENTE
