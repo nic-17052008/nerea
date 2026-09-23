@@ -2470,6 +2470,26 @@
 
                 error.style.display = "none";
 
+                // Reproducir automáticamente la canción de esta noche
+                const nightAudio = document.querySelector(`[data-night-audio="${day}"]`);
+
+                if (nightAudio) {
+
+                    // Pausar cualquier otra canción y volverla al principio
+                    nightAudios.forEach(otherAudio => {
+                        if (otherAudio !== nightAudio) {
+                            otherAudio.pause();
+                            otherAudio.currentTime = 0;
+                        }
+                    });
+
+                    // La contraseña se ha introducido mediante una acción del usuario,
+                    // por lo que intentamos iniciar la reproducción inmediatamente.
+                    nightAudio.play().catch(error => {
+                        console.log("El navegador ha bloqueado la reproducción automática:", error);
+                    });
+                }
+
                 if (day === 7) {
                     startCamera();
                 }
